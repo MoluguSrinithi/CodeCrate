@@ -1,0 +1,24 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Clone') {
+      steps {
+        // clone repo
+        git url: 'https://github.com/MoluguSrinithi/MavenWebProject.git', branch: 'main'
+      }
+    }
+
+    stage('Build') {
+      steps {
+        // simple build step (for windows Jenkins use bat)
+        bat 'echo Running build... & dir'
+      }
+    }
+  }
+
+  post {
+    success { echo 'Two-stage pipeline finished SUCCESS' }
+    failure { echo 'Two-stage pipeline FAILED' }
+  }
+}
