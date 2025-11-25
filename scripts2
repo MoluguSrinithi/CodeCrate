@@ -1,0 +1,200 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Clone') {
+      steps {
+        git url: 'https://github.com/keerthikaeaday/bbb', branch: 'main'
+      }
+    }
+
+    stage('Build web project') {
+      steps {
+        // change directory to web project then run mvn
+        bat 'cd maven-webproject && mvn -B -DskipTests package'
+      }
+    }
+
+    stage('Test (skip)') {
+      steps {
+        echo 'Skipping tests for now'
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'maven-webproject/target/*.war, maven-webproject/target/*.jar', allowEmptyArchive: true
+    }
+    success {
+      echo 'Build completed SUCCESS'
+    }
+    failure {
+      echo 'Build FAILED — check console output'
+    }
+  }
+
+
+===================================================
+pipeline {
+  agent any
+
+  stages {
+    stage('Clone') {
+      steps {
+        // clone repo
+        git url: 'https://github.com/keerthikaeaday/bbb', branch: 'main'
+      }
+    }
+
+    stage('Build') {
+      steps {
+        // simple build step (for windows Jenkins use bat)
+        bat 'echo Running build... & dir'
+      }
+    }
+  }
+
+  post {
+    success { echo 'Two-stage pipeline finished SUCCESS' }
+    failure { echo 'Two-stage pipeline FAILED' }
+  }
+}
+
+==========================================================
+node {
+    stage('Start') {
+        echo "Scripted pipeline: Start"
+    }
+
+    stage('Build') {
+        echo "Scripted pipeline: Build"
+        bat """
+        echo Compiling...
+        rem short wait - ping localhost 2 times (works as sleep)
+        ping -n 2 127.0.0.1 >nul
+        """
+    }
+
+    stage('Test') {
+        echo "Scripted pipeline: Test"
+        bat """
+        echo Running tests...
+        ping -n 2 127.0.0.1 >nul
+        """
+    }
+
+    stage('Deploy') {
+        echo "Scripted pipeline: Deploy"
+        bat """
+        echo Deploying...
+        ping -n 2 127.0.0.1 >nul
+        """
+    }
+}
+
+
+
+
+====================================================
+
+pipeline {
+    agent any
+    tools{
+        jdk 'JAVA_HOME'
+        maven 'MAVEN_HOME'
+    }
+    stages {
+        stage('git repo & clean') {
+            steps {
+                bat "rmdir /s /q Harshitha_Jenkins_Maven || exit 0"
+                bat "git clone https://github.com/Harshitha-Macha/Harshitha_Jenkins_Maven.git"
+                bat "mvn clean -f Harshitha_Jenkins_Maven/pom.xml"
+            }
+        }
+        stage('install') {
+            steps {
+                bat "mvn install -f Harshitha_Jenkins_Maven/pom.xml" 
+            }
+        }
+        stage('test') {
+            steps {
+                bat "mvn test -f Harshitha_Jenkins_Maven/pom.xml"
+            }
+        }
+        stage('package') {
+            steps {
+                bat "mvn package -f Harshitha_Jenkins_Maven/pom.xml"
+            }
+        }
+    }
+}
+}
+
+=====================================================
+
+pipeline {
+
+   agent any
+
+   tools{
+
+       maven 'MAVEN-HOME'
+
+   }
+
+   stages {
+
+       stage('git repo & clean') {
+
+           steps {
+
+               //bat "rmdir  /s /q mavenjava"
+
+               bat "git clone provide your github link"
+
+               bat "mvn clean -f mavenjava"
+
+           }
+
+       }
+
+       stage('install') {
+
+           steps {
+
+               bat "mvn install -f mavenjava" #project name#
+
+           }
+
+       }
+
+       stage('test') {
+
+           steps {
+
+               bat "mvn test -f mavenjava"
+
+           }
+
+       }
+
+       stage('package') {
+
+           steps {
+
+               bat "mvn package -f mavenjava"
+
+           }
+
+       }
+
+   }
+
+}
+
+
+
+
+
+============================================================
