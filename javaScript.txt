@@ -1,0 +1,43 @@
+pipeline {
+  agent any
+
+  stages {
+
+    stage('Clone') {
+      steps {
+        git url: 'https://github.com/MoluguSrinithi/MavenJavaProject.git', branch: 'main'
+      }
+    }
+
+    stage('Detect project folder') {
+      steps {
+        bat 'echo Workspace contents: && dir'
+      }
+    }
+
+    stage('Build web project') {
+      steps {
+        bat 'for /d %%i in (*) do if exist "%%i\\pom.xml" mvn -B -DskipTests package -f "%%i\\pom.xml"'
+      }
+    }
+
+    stage('Test (skip)') {
+      steps {
+        echo 'Skipping tests for now'
+      }
+    }
+
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: '**/target/*.war, **/target/*.jar', allowEmptyArchive: true
+    }
+    success {
+      echo 'Build completed SUCCESS'
+    }
+    failure {
+      echo 'Build FAILED — check console output'
+    }
+  }
+}
