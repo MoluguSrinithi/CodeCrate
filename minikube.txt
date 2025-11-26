@@ -1,0 +1,10 @@
+minikube start -driver = docker
+minikube kubectl -- get pods -A
+kubectl version --client
+kubectl create deployment mynginx --image=nginx
+kubectl set image deployment/mynginx nginx=nginx:latest
+kubectl get deployments
+kubectl expose deployment mynginx --type=NodePort --port=80 --target-port=80
+kubectl scale deployment mynginx --replicas=4
+kubectl get services mynginx
+kubectl port-forward svc/mynginx 8081:80
